@@ -1,0 +1,164 @@
+<html>
+  <head>
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>Enphase Energy - Interview Homework</title>
+    {% endif %}
+    <style>
+  
+    div {
+      color: white;
+      text-shadow: 1px 1px 3px #000;
+    }
+    .plaintext {
+      color: white;
+      text-shadow: 0px 0px 0px #000;
+    }
+    textarea { 
+      width:12em; 
+      border-radius:2px; 
+      border: solid 1px #ccc; 
+      padding:0.4em; 
+      background-color: #f5f5f5;
+      box-shadow: inset 0 4px 4px rgba(0,0,0,0.2); 
+      box-shadow: 0px 0px 10px #000000;
+      margin-bottom: 5px;
+    }
+    .word {
+      float:left;
+    }
+    .word_count {
+      float:right;
+    }
+    textarea:focus { 
+      outline: none !important;
+      border-color: #719ECE;
+      box-shadow: 0 0 10px #0000ff;
+    }
+    .button {
+      border: 0 none;
+      border-radius: 2px 2px 2px 2px;
+      color: #FFFFFF;
+      cursor: pointer;
+      /*display: inline-block;*/
+      font-family: Arial,sans-serif;
+      font-size: 9px;
+      font-weight: bold;
+      line-height: 21px;
+      text-transform: none;
+      transition: all 0.3s ease 0s;
+      -moz-transition: all 0.3s ease 0s;
+      -webkit-transition: all 0.3s ease 0s;
+
+      /*Elegant overrides to default above*/
+      border-style: padding: 10px 30px 10px 30px;
+      background: #66C1E4;
+      border: none;
+      color: #FFF;
+      box-shadow: 1px 1px 1px #4C6E91;
+      -webkit-box-shadow: 1px 1px 1px #4C6E91;
+      -moz-box-shadow: 1px 1px 1px #4C6E91;
+      text-shadow: 1px 1px 1px #5079A3;
+      }
+      .button.green {
+        background: none repeat scroll 0 0 #46b98a;
+        color: #FFFFFF;
+      }
+      .button.green:hover {
+        background: none repeat scroll 0 0 #444444;
+        color: #FFFFFF;
+      }
+      .bargraph {
+        list-style: none;
+        padding-top: 20px;
+        width:560px;
+      }
+      ul.bargraph li {
+        height: 35px;
+        color: white;
+        text-align: left;
+        font-style: italic;
+        font-weight:bolder;
+        font-size: 14px;
+        line-height: 35px;
+        padding: 0px 20px;
+        margin-bottom: 5px;
+      }
+      /* add some depth */
+
+      ul.bargraph li.reddeep {
+      background: #ED1C24;
+      width:0px;
+      }
+      ul.bargraph li.redpink {
+      background: #EF465B;
+      width:0px;
+      }
+      ul.bargraph li.pink {
+      background: #E55A6B;
+      width:0px;
+      }
+      ul.bargraph li.orangered {
+      background: #E28159;
+      width:0px;
+      }
+      ul.bargraph li.orange {
+      background: #F99C1C;
+      width:0px;
+      }
+      ul.bargraph li.yellow {
+      background: #F4D41E;
+      width:0px;
+      }
+      ul.bargraph li.green {
+      background: #97B546;
+      width:0px;
+      }
+      ul.bargraph li.greenbright {
+      background: #36B669;
+      width:0px;
+      }
+      ul.bargraph li.greenblue {
+      background: #42BDA5;
+      width:0px;
+      }
+      ul.bargraph li.blue {
+      background: #00AEEF;
+      width:0px;
+      }
+      ul.bargraph li {
+        box-shadow: 3px 3px 10px #000000;
+        height:30px;
+        line-height: 30px;
+      }
+      /*Ok. borrowed this image from the Enlight demo on the website.*/
+      body{
+        background-image: 
+        url("https://enphase.com/wp-content/themes/enphase/images/enl/enl_back1_m.jpg");
+        background-repeat: 
+        no-repeat;
+        background-attachment: 
+        fixed;
+        background-color: rgba(0, 0, 0, 0.6);
+      }
+
+      /* Decided not to use this, but adds an overlay to the background, for a shading effect. */
+      #dots_fun{  
+          width:100%;
+          height:100%;
+          position:fixed;
+          top:0px;
+          left:0px;
+          background:transparent url(http://1stdesignmedia.com/wp-content/uploads/2013/11/pattern_2x2.png) repeat top left ;
+      }
+    </style>
+    <div>
+      <img src="http://enphase.com/wp-content/themes/enphase/images/logo.png"> Word Frequency Homework.</img>
+    </div>
+    <hr>
+  </head>
+  <body>
+    {% block content %}{% endblock %}
+  </body>
+</html>

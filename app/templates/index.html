@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+
+<style type="text/css">
+    #loading
+    {
+        display:none;
+        position:fixed;
+        left:0;
+        top:0;
+        width:100%;
+        height:100%;
+        background:rgba(0,0,0,0.8);
+        z-index:1000;
+    }
+  
+    #loadingcontent
+    {
+        display:table;
+        position:fixed;
+        left:0;
+        top:0;
+        width:100%;
+        height:100%;
+    }
+  
+    #loadingspinner
+    {
+        display: table-cell;
+        vertical-align:middle;
+        width: 100%;
+        text-align: center;
+        font-size:larger;
+        padding-top:80px;
+    }
+</style>
+
+<div id="loading">
+    <div id="loadingcontent">
+        <p id="loadingspinner">
+            Please Stand By... (this could take a minute)
+        </p>
+    </div>
+</div>
+
+<div style="margin-left:20px; margin-right:20px; float:left">
+  <label for="spinner" class="text">Min Word Length</label><br>
+  <input id="minword" name="minword" value=2>
+  <p>
+  <label for="minfreq" class="text">Min Word Frequency</label><br>
+  <input id="minfreq" name="minfreq" value=1>
+  <p>
+  <label for="maxfreq" class="text">Max Word Frequency </label><br>
+  <input id="maxfreq" name="maxfreq" value=10000>
+  <p>
+  <label for="maxtop" class="text">Max Top Words </label><br>
+  <input id="maxtop" name="maxtop" value=20>  
+  <p>
+
+  <input type="checkbox" id="nouns"><label for="nouns">Nouns Only</label>
+  <p>
+</div> 
+
+{{form.story}}
+<br>
+
+<div style="clear:both;">
+    <button class="button green" style="width:100px; height:50px; font-size: 1em;" id="runme">RUN ME</button>
+    <h1 class="text">Top 20 Occurrences</h1>
+    <ul class="bargraph">
+    </ul>
+</div>
+
+
+<script>
+var colorClassIndex = ['reddeep', 'redpink', 'pink', 'orangered', 'orange', 'yellow', 'green', 'greenbright', 'greenblue', 'blue' ];
+
+var bargraphMaxRows = 0;
+
+function update() {
+
+        // Pull values from the form fields. We will send them ourselves through ajax to avoid ugly page reloads.
+        var story = $("#story").val();
+        var minword = $("#minword").val();
+        var minfreq = $("#minfreq").val();
+        var maxfreq = $("#maxfreq").val();
+        var maxtop = $("#maxtop").val();
+        var nouns = $("#nouns").prop('checked');
+
+        // If we're changing the number of words to display, tear them all down and build
+        // new empty ones. 
+        if(maxtop != bargraphMaxRows) {
+            $(".bargraph").empty();
+            bargraphMaxRows = maxtop;
+            $("h1").text("Top " + bargraphMaxRows + " Occurrences");
+            var colorIndex=0;
+            for(i=1; i<=maxtop; i++) {
+
+                var colorClass = colorClassIndex[colorIndex];
+                if((i)%(maxtop/10) == 0) { // Evenly distribute the colors we have available.
+                    if(colorIndex < colorClassIndex.length-1) {
+                        colorIndex++;
+                    }
+                }
+                // Populate the bargraph with li elements. Note we start them as invisible so jquery show can reveal them
+                // in a nice way later.
+                var liElement='<li style="display:none" id="rank' + i + '" class="' + colorClass + '"><div class="word text"></div><div class="word_count"><div></li>';
+                $(".bargraph").append(liElement);
+            }
+        }
+        if ($("#nouns").prop('checked')) {
+            $("#loading").fadeIn();
+        }
+        // Make the call to our server to process whatever is in the text area.  Nice thing here, since the code
+        // is fast enough, it will dynamically change the bar chart as values are incremented on the main page.
+        $.ajax({
+          type: "POST",
+          url: "update",
+          data: {"story": story, "minword": minword, "minfreq": minfreq, "maxfreq": maxfreq, 'maxtop': maxtop, 'nouns': nouns},
+          success: function(data) {  
+
+          if ($("#nouns").prop('checked')) {
+              $("#loading").fadeOut();
+          }            
+            // Limiting ourselvs to 10. Can easily make this dynamically controlled. Feature request!
+            for(i=0; i<bargraphMaxRows; i++) {     
+                var rankid=null;
+                // If our server doesn't return enough rows, we hide those we're not using.
+                if(data['words'][i] == null) {
+                    rankid = "#rank" + (i+1);
+                    $(rankid).animate({ 'width':0}) 
+                    $(rankid).hide(100);  
+                    continue;
+                }
+                // If we have new data, update the bar chart.
+                currWord = data['words'][i]
+                rankid = "#rank" + (i+1);
+                if( $(rankid) ) {
+                    $(rankid).show(200);
+                    $(rankid + " .word").text(currWord['name']);
+                    $(rankid + " .word_count").text(currWord['true_value']);
+                    $(rankid).animate({ 'width':currWord.value})
+                }
+            }
+        }
+        });
+};
+
+$(document).ready(function() {
+    // Use a little jQuery UI for the spinners.
+    $( "#minword" ).spinner({min:1, max:50, step:1}).change(function(){update();});
+    $( "#minfreq" ).spinner({min:1, max:10000, step:1}).change(function(){update();});
+    $( "#maxfreq" ).spinner({min:1, max:10000, step:1}).change(function(){update();});
+    $( "#maxtop" ).spinner({min:10, max:50, step:10}).change(function(){ 
+        $(this).val(Math.ceil($(this).val()/ 10) * 10)
+        update();
+    });
+    
+    // $( "#check" ).button();
+    $("#nouns").click(function() {
+        if ($(this).prop('checked')) {
+            window.alert('NOTE: \nThis will slow the search considerably.\n\nClick RUN ME when ready.');
+        }
+    })
+
+    // Nice effect, chagning the value or clicking the arrows will dynamically change the bar chart.
+    $('.ui-spinner-button').click(function() {
+        if (!$("#nouns").prop('checked')) {
+            update();
+        }
+        
+    });
+
+    // Start the bar chart hidden and init some styles.
+    $("li").hide();
+    $("#story").css({width:500, height:200});
+
+
+    $("#runme").click(function(obj) {
+        update();
+        });
+});
+
+</script>
+{% endblock %}
