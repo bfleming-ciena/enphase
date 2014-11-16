@@ -142,7 +142,37 @@
         fixed;
         background-color: rgba(0, 0, 0, 0.6);
       }
-
+      #loading
+      {
+          display:none;
+          position:fixed;
+          left:0;
+          top:0;
+          width:100%;
+          height:100%;
+          background:rgba(0,0,0,0.8);
+          z-index:1000;
+      }
+      
+      #loadingcontent
+      {
+          display:table;
+          position:fixed;
+          left:0;
+          top:0;
+          width:100%;
+          height:100%;
+      }
+      
+      #loadingspinner
+      {
+          display: table-cell;
+          vertical-align:middle;
+          width: 100%;
+          text-align: center;
+          font-size:larger;
+          padding-top:80px;
+      }
       /* Decided not to use this, but adds an overlay to the background, for a shading effect. */
       #dots_fun{  
           width:100%;
@@ -152,6 +182,7 @@
           left:0px;
           background:transparent url(http://1stdesignmedia.com/wp-content/uploads/2013/11/pattern_2x2.png) repeat top left ;
       }
+      
     </style>
     <div>
       <img src="http://enphase.com/wp-content/themes/enphase/images/logo.png"> Word Frequency Homework.</img>
