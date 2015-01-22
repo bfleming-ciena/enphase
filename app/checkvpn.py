@@ -51,6 +51,7 @@ def test_vpc_status():
 	ec2_conn = boto.vpc.connect_to_region(ec2_region)
 		#aws_access_key_id= aws_access_key_id,
 		#aws_secret_access_key=aws_secret_access_key)
+        cgws = {c.id:c.tags['Name'] for c in ec2_conn.get_all_customer_gateways()}
         status_results = []
 	# Setup the CSV file writer
 	with open(csv_file_name, 'a') as csv_file:
@@ -59,13 +60,15 @@ def test_vpc_status():
 		for vpn_connection in ec2_conn.get_all_vpn_connections():
 			# Handle connection and its tunnels
 			for tunnel in vpn_connection.tunnels:
+                                #import ipdb
+                                #ipdb.set_trace()
 				# Test the tunnel and output
 				status = test_tunnel_status(tunnel)
 				row = [datetime.datetime.now(), vpn_connection.id, 
 					tunnel.outside_ip_address, status, 
 					tunnel.status_message, tunnel.last_status_change]
 				csv_writer.writerow(row)
-                                msg = "Tunnel {0} is {1} since {2}\n".format(tunnel.outside_ip_address, tunnel.status, tunnel.last_status_change)
+                                msg = "Tunnel [ {3} ] {0} is {1} since {2}\n".format(tunnel.outside_ip_address, tunnel.status, tunnel.last_status_change,cgws[vpn_connection.customer_gateway_id])
                                 status_results.append(msg)
         return status_results
  
