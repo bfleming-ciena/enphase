@@ -1,6 +1,4 @@
 from app import app
-import nltk
-nltk.download('punkt')
 
 class color:
     BLUE = '\033[94m'
